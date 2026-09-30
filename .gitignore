@@ -1,0 +1,29 @@
+# 根目录只跟踪通用工具；新建题目目录默认保持私有
+/*
+!/.gitignore
+!/README.md
+!/AGENTS.md
+!/new_problem.py
+!/problem-theme.typ
+!/docs/
+!/scripts/
+!/fonts/
+
+# 本地凭据、缓存及生成产物
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+*.o
+*.obj
+*.pdf
+*.zip
+.DS_Store
+Thumbs.db
+
+# 字体从固定上游提交下载，不提交二进制
+/fonts/**/*.ttf
+/fonts/**/*.otf
+/fonts/**/*.woff*
