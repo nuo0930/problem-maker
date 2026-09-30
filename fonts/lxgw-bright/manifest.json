@@ -1,0 +1,18 @@
+{
+  "upstream": "https://github.com/lxgw/LxgwBright",
+  "commit": "f9e978f4944cb36b081941a001e92a02e7dcc3d3",
+  "files": [
+    {
+      "name": "LXGWBright-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/lxgw/LxgwBright/f9e978f4944cb36b081941a001e92a02e7dcc3d3/LXGWBright/LXGWBright-Regular.ttf",
+      "sha256": "d8cd796c0c73f82dcaf514f11d7408892890ce3bfea570c1754fb0bed33cd5a7",
+      "bytes": 13522964
+    },
+    {
+      "name": "LXGWBright-Medium.ttf",
+      "url": "https://raw.githubusercontent.com/lxgw/LxgwBright/f9e978f4944cb36b081941a001e92a02e7dcc3d3/LXGWBright/LXGWBright-Medium.ttf",
+      "sha256": "91edbdde61f0148736decb6cf44e93707477999cacc92e1046ea7c462eec5167",
+      "bytes": 13353248
+    }
+  ]
+}
