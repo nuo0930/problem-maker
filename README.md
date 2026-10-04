@@ -96,9 +96,11 @@ python3 scripts/package_problem.py example --solution solution.py --editorial ed
 python3 scripts/package_problem.py example --samples-only
 ```
 
-ZIP 只包含 `statement.md`、`statement.typ`、`statement.pdf`、题解、标程，以及 `down/`、`data/` 中的 `.in`、`.ans` 或 `.out` 文件。旧题仅有 `samples/` 时保持兼容；两个样例目录同时含文件会报错，避免交付两套来源。打包前检查每个输入恰有一个配套答案，拒绝孤立输入或答案。不会包含 BRIEF、STATUS、制作报告、评测工具、字体、项目文档或整个工作区。
+ZIP 只包含 `statement.md`、`statement.typ`、`statement.pdf`、题解、标程，以及 `down/`、`data/` 中的 `.in`、`.ans` 或 `.out` 文件。旧题仅有 `samples/` 时保持兼容；两个样例目录同时含文件会报错，避免交付两套来源。打包前检查每个输入恰有一个配套答案，拒绝孤立输入或答案。不会包含 BRIEF、STATUS、制作报告、私有评测工具、字体、项目文档或整个工作区。
 
 `--samples-only` 生成 `<题目目录名>-down.zip`，仅含整套样例文件，解包后保留 `down/`（旧题则为 `samples/`）目录；不要求其他题目产物已生成。检查记录为 `reports/sample-delivery-validation.json`。
+
+交互题的公开接口头文件、示例 grader 和编译说明可放在 `down/`，通过重复的 `--participant-file down/example.h` 等参数显式加入两类 ZIP。仅允许样例目录内的 `.h/.hpp/.cpp/.md` 文件，不自动收录其他源码或私有评测器。
 
 交付版 Typst 将共用主题和 limits 元信息内联到题面源码中，保留样例文件读取。工作目录中的题面仍导入共用主题；解包后的源码不依赖项目根目录，重新编译时需要本机具备相同字体。内联支持主题说明中的入口写法；使用其他本地资源时，应先调整题面使交付源码自包含。
 

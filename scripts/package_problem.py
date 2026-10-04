@@ -53,6 +53,8 @@ def main():
     parser.add_argument('--solution', default='solution.cpp', help='题目目录内的标程文件名')
     parser.add_argument('--editorial', default='editorial.md', help='题目目录内的题解文件名')
     parser.add_argument('--samples-only', action='store_true', help='仅打包整套下载样例')
+    parser.add_argument('--participant-file', action='append', default=[],
+                        help='额外下发的公开接口文件，须在样例目录内；可重复指定')
     args = parser.parse_args()
     problem = (ROOT / args.problem).resolve()
     if not problem.is_dir() or not problem.is_relative_to(ROOT) or problem == ROOT:
@@ -62,11 +64,21 @@ def main():
             parser.error('标程和题解参数须为文件名')
     folder = sample_folder(problem, parser)
     samples = paired_files(problem, folder, parser)
+    attachments = []
+    for name in args.participant_file:
+        path = Path(name)
+        if (path.is_absolute() or len(path.parts) != 2 or path.parts[0] != folder
+                or path.suffix not in ('.h', '.hpp', '.cpp', '.md')):
+            parser.error('公开接口附件须为样例目录内的 .h/.hpp/.cpp/.md 文件')
+        if not (problem / path).is_file():
+            parser.error(f'缺少公开接口附件：{name}')
+        attachments.append(str(path))
     names = [] if args.samples_only else ['statement.md', 'statement.typ', 'statement.pdf', args.editorial, args.solution]
     for name in names:
         if not (problem / name).is_file():
             parser.error(f'缺少 {name}')
     names.extend(samples)
+    names.extend(attachments)
     if not args.samples_only:
         names.extend(paired_files(problem, 'data', parser))
     if len(names) != len(set(names)):
@@ -116,6 +128,7 @@ def main():
               'data_pairs': sum(name.startswith('data/') and name.endswith('.in') for name in names),
               'data_files_sha256_checked': checked, 'all_zip_entries_crc_checked': True,
               'sample_folder': folder, 'sample_pairs': len(samples) // 2,
+              'participant_files': attachments,
               'samples_only': args.samples_only,
               'typst_theme_and_limits_inlined': not args.samples_only, 'external_publication': False}
     sums = 'down-SHA256SUMS' if args.samples_only else 'SHA256SUMS'

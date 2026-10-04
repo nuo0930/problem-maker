@@ -54,6 +54,32 @@ class PackageTests(unittest.TestCase):
         self.pair('samples', '1')
         self.assertEqual(self.run_package().returncode, 0)
 
+    def test_public_interface_attachments_are_opt_in(self):
+        self.pair('down', 'example1')
+        for name in ('example.h', 'grader.cpp', 'README.md'):
+            (self.problem / 'down' / name).write_text('public interface fixture\n')
+        self.assertEqual(self.run_package('--samples-only', '--participant-file', 'down/example.h',
+                                         '--participant-file', 'down/grader.cpp',
+                                         '--participant-file', 'down/README.md').returncode, 0)
+        with zipfile.ZipFile(self.problem / 'dist/example-down.zip') as archive:
+            self.assertEqual(len(archive.namelist()), 5)
+            self.assertIn('down/grader.cpp', archive.namelist())
+        self.assertEqual(self.run_package('--samples-only').returncode, 0)
+        with zipfile.ZipFile(self.problem / 'dist/example-down.zip') as archive:
+            self.assertNotIn('down/grader.cpp', archive.namelist())
+
+    def test_private_attachment_rejected(self):
+        self.pair('down', 'example1')
+        self.assertNotEqual(self.run_package('--participant-file', 'BRIEF.md').returncode, 0)
+        self.assertNotEqual(self.run_package('--participant-file', 'reports/secret.txt').returncode, 0)
+
+    def test_external_interface_link_rejected(self):
+        self.pair('down', 'example1')
+        secret = self.root / 'outside.h'
+        secret.write_text('private external interface\n')
+        (self.problem / 'down/example.h').symlink_to(secret)
+        self.assertNotEqual(self.run_package('--participant-file', 'down/example.h').returncode, 0)
+
     def test_sample_only_without_other_artifacts(self):
         self.pair('down', 'example1')
         for name in ('statement.md', 'statement.typ', 'statement.pdf', 'editorial.md', 'solution.cpp'):
