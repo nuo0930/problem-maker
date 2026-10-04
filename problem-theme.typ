@@ -167,9 +167,9 @@
 #let sample-reference(number, id, tests, unit: "测试点") = {
   assert(("测试点", "测试包").contains(unit), message: "未知样例约束单位")
   heading(level: 1)[样例 #number]
-  block[
+  block(breakable: false)[
     #set par(first-line-indent: 0pt)
-    见选手目录下的 #raw(id + str(number) + ".in") 与 #raw(id + str(number) + ".ans")。
+    见选手目录下的 #raw(id + "/" + id + str(number) + ".in") 与 #raw(id + "/" + id + str(number) + ".ans")。
 
     该样例满足#unit #(if type(tests) == array { test-point-label(tests) } else { tests }) 的约束条件。
   ]

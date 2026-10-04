@@ -47,7 +47,7 @@ typst compile --root . --font-path fonts --format png example/statement.typ 'exa
 
 ## CNOI 下载样例
 
-`down/` 就是下发文件包，即“选手目录”。整套样例（小样例、大样例）在 `down/` 按标签连续命名，小样例仍由 `sample` 展示文件内容。大样例使用 `sample-reference`，只输出路径和最紧测试点约束，避免把大文件内容载入题面：
+单题的 `down/` 直接平铺下发文件，不额外建立题目子目录。组题时由出题人将各题下发内容放到总选手目录的 `[id]/` 子目录。整套样例（小样例、大样例）在单题 `down/` 按标签连续命名，小样例仍由 `sample` 展示文件内容。大样例使用 `sample-reference`，只输出路径和最紧测试点约束，避免把大文件内容载入题面：
 
 ```typst
 #import "../problem-theme.typ": sample, sample-reference
@@ -55,7 +55,7 @@ typst compile --root . --font-path fonts --format png example/statement.typ 'exa
 #sample-reference(2, "example", (3, 4, 5, 6))
 ```
 
-文件引用相对于选手目录，不重复添加 `down/` 前缀。第二个调用输出「见选手目录下的 example2.in 与 example2.ans」及「该样例满足测试点 3 ~ 6 的约束条件」。`tests` 可传实际最紧一档的编号数组，由主题统一简写；也可传不可比较约束组合的说明内容，组件不替代输入 validator 或人工语义审查。每档限制的覆盖、手调样例及不泄露特殊构造的规则见 [workflow](problem-workflow.md#cnoi-style-样例与下载文件)。
+文件引用相对于组题后的总选手目录，使用 BRIEF 标签作为目录前缀，不添加 `down/`。第二个调用输出「见选手目录下的 example/example2.in 与 example/example2.ans」及「该样例满足测试点 3 ~ 6 的约束条件」。`tests` 可传实际最紧一档的编号数组，由主题统一简写；也可传不可比较约束组合的说明内容，组件不替代输入 validator 或人工语义审查。每档限制的覆盖、手调样例及不泄露特殊构造的规则见 [workflow](problem-workflow.md#cnoi-style-样例与下载文件)。
 
 交互题下载样例可传 `unit: "测试包"`，例如 `sample-reference(2, "example", (1,), unit: "测试包")`；默认单位仍为“测试点”。
 
@@ -117,4 +117,4 @@ python3 new_problem.py arena --title "另一道题" --directory arena-other
 
 `python3 scripts/package_problem.py example` 在交付 ZIP 的 statement.typ 中内联共用主题和 limits.json 元信息，保留 down 文件读取（兼容旧题 samples）；工作目录中的原文件不变。全部下载样例随 ZIP 交付，可用 `--samples-only` 另打样例包。ZIP 不附带字体或根目录脚本。解包后安装相同字体，并在题目目录执行 `typst compile statement.typ statement.pdf`，或用 `--font-path` 指向字体目录。
 
-交互题的公开头文件、示例 grader 和编译说明放在 `down/`，打包时逐个指定 `--participant-file down/example.h --participant-file down/grader.cpp --participant-file down/README.md`。该选项也适用于 `--samples-only`；不会自动收录目录内其他源码或私有评测器。
+交互题的公开头文件、示例 grader 和编译说明直接平铺在单题 `down/`；题面引用分别写为 `example/example.h`、`example/grader.cpp`、`example/README.md`。打包时逐个指定 `--participant-file down/example.h --participant-file down/grader.cpp --participant-file down/README.md`。该选项也适用于 `--samples-only`；不会自动收录目录内其他源码或私有评测器。
