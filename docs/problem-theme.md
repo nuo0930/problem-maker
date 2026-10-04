@@ -68,12 +68,12 @@ typst compile --root . --font-path fonts --format png example/statement.typ 'exa
 #show: problem.with(title: "示例", id: "example", style: "CNOI-style", test-count: 10)
 = 数据范围
 #cnoi-data-table(10, (
-  (tests: (1, 2), constraints: [$n <= 10$]),
-  (tests: (3, 4, 5, 6, 7, 8, 9, 10), constraints: [无额外约束]),
-))
+  (tests: (1, 2), ranges: (n: [$<=10$]), constraints: [无]),
+  (tests: (3, 4, 5, 6, 7, 8, 9, 10), ranges: (n: [$<=1000$]), constraints: [无]),
+), range-columns: ((key: "n", label: [$n$]),))
 ```
 
-表格检查编号完整、不重复，每点等分；同一行仍按数据点独立评分。编号由 `test-point-label` 格式化：连续两个写作 `1, 2`，连续三个及以上写作 `3 ~ 10`，非连续段用逗号分隔；可用此函数统一其他说明中的测试点编号。
+数值范围按变量单独成列，“特殊性质”只写结构或其他特殊条件。`range-columns` 指定每列的字段名和显示标题，每行在 `ranges` 中提供对应值；多个变量配置多列。表格检查编号完整、不重复，每点等分；同一行仍按数据点独立评分。编号由 `test-point-label` 格式化：连续两个写作 `1, 2`，连续三个及以上写作 `3 ~ 10`，非连续段用逗号分隔；可用此函数统一其他说明中的测试点编号。
 
 ### IOI / CNOI 交互
 

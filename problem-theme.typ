@@ -175,7 +175,7 @@
 }
 
 // CNOI 非交互：允许归并相同约束的行，但每个数据点仍独立等分评分。
-#let cnoi-data-table(count, rows, total-score: 100) = {
+#let cnoi-data-table(count, rows, total-score: 100, range-columns: ()) = {
   assert((10, 20, 25).contains(count))
   assert(calc.rem(total-score, count) == 0)
   let seen = ()
@@ -187,9 +187,13 @@
   }
   assert(seen.len() == count, message: "评分表必须覆盖全部数据点")
   [共 #count 个独立数据点，每点 #(total-score / count) 分，按数据点分别计分。]
-  table(columns: (auto, 1fr),
-    table.header([*数据点*], [*附加约束*]),
-    ..rows.map(row => (test-point-label(row.tests), row.constraints)).flatten(),
+  table(columns: (auto, ..range-columns.map(_ => auto), 1fr),
+    table.header([*数据点*], ..range-columns.map(column => strong(column.label)), [*特殊性质*]),
+    ..rows.map(row => (
+      test-point-label(row.tests),
+      ..range-columns.map(column => row.ranges.at(column.key)),
+      row.constraints,
+    )).flatten(),
   )
 }
 
