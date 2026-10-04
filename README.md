@@ -68,6 +68,10 @@ python3 new_problem.py example --title "另一道题" --style IOI-style --kind i
 
 部分分方案由出题人指定，或由 AI 提出后交出题人决定。CNOI 的文件输入输出必须同时反映在题面、标程和评测运行方式中。
 
+CNOI 除题意小样例外，还提供覆盖每档限制的下载样例，并尽量补一组适合手调的较强小样例。`down/` 即下发文件包，也就是题面中的选手目录，文件引用不重复写 `down/`。整套样例在 `down/` 中从 1 连续编号为 `[id]1.in` / `[id]1.ans` 等。小样例展示输入输出，大样例只写文件路径和实际满足的最紧测试点限制；样例不提示做法、不复用正式数据的特殊构造。细则见[样例与下载文件](docs/problem-workflow.md#cnoi-style-样例与下载文件)。
+
+数据范围表和样例限制说明中的连续测试点编号，两个用逗号（`1, 2`），三个及以上用区间（`3 ~ 6`）；非连续段以逗号分隔。三种题面格式保持一致。
+
 ## Typst 题面
 
 每题维护 `statement.md`、`statement.typ` 和 `statement.pdf`。所有 Typst 题面导入根目录 [problem-theme.typ](problem-theme.typ)，统一控制字体、行距、标题、引用、样例框与页码。
@@ -88,9 +92,13 @@ python3 scripts/build_statement.py example
 python3 scripts/package_problem.py example
 # 标程或题解文件名不同时可以指定：
 python3 scripts/package_problem.py example --solution solution.py --editorial editorial.md
+# 另打包仅含选手下载样例的 ZIP：
+python3 scripts/package_problem.py example --samples-only
 ```
 
-ZIP 只包含 `statement.md`、`statement.typ`、`statement.pdf`、题解、标程，以及 `samples/`、`data/` 中的 `.in`、`.ans` 或 `.out` 文件。不会包含 BRIEF、STATUS、制作报告、评测工具、字体、项目文档或整个工作区。
+ZIP 只包含 `statement.md`、`statement.typ`、`statement.pdf`、题解、标程，以及 `down/`、`data/` 中的 `.in`、`.ans` 或 `.out` 文件。旧题仅有 `samples/` 时保持兼容；两个样例目录同时含文件会报错，避免交付两套来源。打包前检查每个输入恰有一个配套答案，拒绝孤立输入或答案。不会包含 BRIEF、STATUS、制作报告、评测工具、字体、项目文档或整个工作区。
+
+`--samples-only` 生成 `<题目目录名>-down.zip`，仅含整套样例文件，解包后保留 `down/`（旧题则为 `samples/`）目录；不要求其他题目产物已生成。检查记录为 `reports/sample-delivery-validation.json`。
 
 交付版 Typst 将共用主题和 limits 元信息内联到题面源码中，保留样例文件读取。工作目录中的题面仍导入共用主题；解包后的源码不依赖项目根目录，重新编译时需要本机具备相同字体。内联支持主题说明中的入口写法；使用其他本地资源时，应先调整题面使交付源码自包含。
 

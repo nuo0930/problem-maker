@@ -43,16 +43,18 @@
   set document(title: title)
   set text(font: ("LXGW Bright", "New Computer Modern"), size: 10.5pt, lang: lang, region: if lang == "zh" { "cn" } else { "us" })
   set par(justify: true, leading: 1em, spacing: 0.8em,
-    first-line-indent: if style == "CNOI-style" { 2em } else { 0em })
+    first-line-indent: if style == "CNOI-style" { (amount: 2em, all: true) } else { 0em })
   set page(paper: "a4", margin: (x: 19mm, top: 23mm, bottom: 20mm),
     header: if style == "ICPC-style" { none } else [
       #set text(size: 8.5pt, fill: luma(90))
+      #set par(first-line-indent: 0pt)
       #grid(columns: (1fr, auto), [#contest], [#title])
       #v(3pt)
       #line(length: 100%, stroke: 0.4pt + luma(170))
     ],
     footer: [
       #set text(size: 8.5pt, fill: luma(90))
+      #set par(first-line-indent: 0pt)
       #line(length: 100%, stroke: 0.4pt + luma(160))
       #v(4pt)
       #align(center, context counter(page).display("第 1 页，共 1 页", both: true))
@@ -60,14 +62,17 @@
   )
   set heading(numbering: none)
   show heading.where(level: 1): it => block(above: 1em, below: 0.55em, sticky: true)[
+    #set par(first-line-indent: 0pt)
     #text(font: "LXGW Bright", size: 12pt, weight: "medium")[
       #if style == "CNOI-style" { [【#it.body】] } else { it.body }
     ]
   ]
   show raw: set text(font: "Noto Sans Mono CJK SC", size: 9pt)
   set table(stroke: 0.4pt + luma(150), inset: 6pt)
+  show table.cell: set par(first-line-indent: 0pt)
 
   align(if style == "ICPC-style" { left } else { center })[
+    #set par(first-line-indent: 0pt)
     #if problem-id != none { text(size: 10pt)[题目 #problem-id]; v(4pt) }
     #text(font: "LXGW Bright", size: 18pt, weight: "medium")[
       #title#if style == "CNOI-style" and id != "" { [（#id）] }
@@ -129,6 +134,46 @@
   }
 }
 
+// 连续两个编号保留逗号；三个及以上才缩写为区间。
+#let test-point-label(tests) = {
+  assert(tests.len() > 0, message: "数据点列表不能为空")
+  let ids = tests.sorted()
+  let parts = ()
+  let start = ids.first()
+  let last = start
+  let append-run(start, last) = {
+    if last - start >= 2 {
+      (str(start) + " ~ " + str(last),)
+    } else if last > start {
+      (str(start), str(last))
+    } else {
+      (str(start),)
+    }
+  }
+  for id in ids.slice(1) {
+    if id == last + 1 {
+      last = id
+    } else {
+      parts += append-run(start, last)
+      start = id
+      last = id
+    }
+  }
+  parts += append-run(start, last)
+  parts.join(", ")
+}
+
+// 文件样例只给路径和最紧约束标注，不读取大样例的内容。
+#let sample-reference(number, id, tests) = {
+  heading(level: 1)[样例 #number]
+  block[
+    #set par(first-line-indent: 0pt)
+    见选手目录下的 #raw(id + str(number) + ".in") 与 #raw(id + str(number) + ".ans")。
+
+    该样例满足测试点 #(if type(tests) == array { test-point-label(tests) } else { tests }) 的约束条件。
+  ]
+}
+
 // CNOI 非交互：允许归并相同约束的行，但每个数据点仍独立等分评分。
 #let cnoi-data-table(count, rows, total-score: 100) = {
   assert((10, 20, 25).contains(count))
@@ -144,7 +189,7 @@
   [共 #count 个独立数据点，每点 #(total-score / count) 分，按数据点分别计分。]
   table(columns: (auto, 1fr),
     table.header([*数据点*], [*附加约束*]),
-    ..rows.map(row => (row.tests.map(str).join("、"), row.constraints)).flatten(),
+    ..rows.map(row => (test-point-label(row.tests), row.constraints)).flatten(),
   )
 }
 

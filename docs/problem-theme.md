@@ -31,7 +31,7 @@ typst compile --root . --font-path fonts --format png example/statement.typ 'exa
 = 输出格式
 输出说明。
 
-#sample(read("samples/1.in"), read("samples/1.ans"))
+#sample(read("down/problem1.in"), read("down/problem1.ans"))
 ```
 
 `problem` 支持比赛名 `contest`、题号 `problem-id`、语言 `lang`、题型 `kind`（batch/interactive/communication）。`time-limit` 单位秒，`memory-limit` 单位 MiB。ICPC 不显示总分或部分分说明；CNOI 普通题须传入 `test-count: 10/20/25`，通信题会被主题拒绝。
@@ -39,11 +39,23 @@ typst compile --root . --font-path fonts --format png example/statement.typ 'exa
 ## 排版
 
 - A4、19 mm 左右页边距、10.5 pt 正文、正文 leading 为 1em、黑白印刷；ICPC 采用左侧题名与四行文件/限制信息，页底细线与总页码；CNOI 保留居中题名和页眉。
-- CNOI 使用带【】的分节标题和首行缩进；IOI、ICPC 使用简洁分节。
+- CNOI 使用带【】的分节标题；正文每段（含标题后的首段）统一首行缩进 2em。标题、页眉页脚、文件元信息、歌词、样例框、下载文件说明和表格单元格不缩进。IOI、ICPC 使用简洁分节，正文不缩进。
 - `epigraph[...]` 使用右侧窄栏，文字左对齐、底部细横线；排两行时用 Typst 的 `\` 显式换行，不使用 HTML。
 - `sample` 默认短行左右并列，长于 42 字符则上下排列；不会压缩 128 位十六进制样例到半页宽。可以指定 `layout: "stack"`。保留全部字符，长于整页可容纳宽度时应调整样例排版并重新检查。
 - 采用自然分页，不在样例前强制换页，也不要求全部样例同页；单个输入/输出框保持完整。
 - 样例文字直接读取 `.in/.ans`，时限和内存建议从 `limits.json` 读取，避免两份题面不同步。
+
+## CNOI 下载样例
+
+`down/` 就是下发文件包，即“选手目录”。整套样例（小样例、大样例）在 `down/` 按标签连续命名，小样例仍由 `sample` 展示文件内容。大样例使用 `sample-reference`，只输出路径和最紧测试点约束，避免把大文件内容载入题面：
+
+```typst
+#import "../problem-theme.typ": sample, sample-reference
+#sample(read("down/example1.in"), read("down/example1.ans"), number: 1)
+#sample-reference(2, "example", (3, 4, 5, 6))
+```
+
+文件引用相对于选手目录，不重复添加 `down/` 前缀。第二个调用输出「见选手目录下的 example2.in 与 example2.ans」及「该样例满足测试点 3 ~ 6 的约束条件」。`tests` 可传实际最紧一档的编号数组，由主题统一简写；也可传不可比较约束组合的说明内容，组件不替代输入 validator 或人工语义审查。每档限制的覆盖、手调样例及不泄露特殊构造的规则见 [workflow](problem-workflow.md#cnoi-style-样例与下载文件)。
 
 ## 评分表
 
@@ -61,7 +73,7 @@ typst compile --root . --font-path fonts --format png example/statement.typ 'exa
 ))
 ```
 
-表格检查编号完整、不重复，每点等分；同一行仍按数据点独立评分。
+表格检查编号完整、不重复，每点等分；同一行仍按数据点独立评分。编号由 `test-point-label` 格式化：连续两个写作 `1, 2`，连续三个及以上写作 `3 ~ 10`，非连续段用逗号分隔；可用此函数统一其他说明中的测试点编号。
 
 ### IOI / CNOI 交互
 
@@ -101,4 +113,4 @@ python3 new_problem.py arena --title "另一道题" --directory arena-other
 
 ## 交付题面
 
-`python3 scripts/package_problem.py example` 在交付 ZIP 的 statement.typ 中内联共用主题和 limits.json 元信息，保留 samples 文件读取；工作目录中的原文件不变。ZIP 不附带字体或根目录脚本。解包后安装相同字体，并在题目目录执行 `typst compile statement.typ statement.pdf`，或用 `--font-path` 指向字体目录。
+`python3 scripts/package_problem.py example` 在交付 ZIP 的 statement.typ 中内联共用主题和 limits.json 元信息，保留 down 文件读取（兼容旧题 samples）；工作目录中的原文件不变。全部下载样例随 ZIP 交付，可用 `--samples-only` 另打样例包。ZIP 不附带字体或根目录脚本。解包后安装相同字体，并在题目目录执行 `typst compile statement.typ statement.pdf`，或用 `--font-path` 指向字体目录。
