@@ -12,7 +12,7 @@ typst compile --root . --font-path fonts example/statement.typ example/statement
 typst compile --root . --font-path fonts --format png example/statement.typ 'example/review/statement-preview-{p}.png'
 ```
 
-主题使用 Typst 0.14.2 官方模板、page、table、raw 接口；本机实际编译器为 0.15.1。兼容 0.14.2 的目标基于 bundled 官方参考，未在 0.14.2 二进制上编译，不应写成已验证。正文、标题、分节和歌词使用 LXGW Bright（Regular / Medium），运行 `python3 scripts/download_fonts.py` 下载字体，OFL 许可证存放在 `fonts/lxgw-bright/`，来源为 [字体作者仓库](https://github.com/lxgw/LxgwBright)，固定提交见该目录 SOURCE.md，文件哈希见 manifest.json。构建脚本自动传入 `--font-path fonts`，无需安装到系统。样例数据仍使用 Noto Sans Mono CJK SC，数学使用 Typst 自带 New Computer Modern。
+主题使用 Typst 0.14.2 官方模板、page、table、raw 接口；本机实际编译器为 0.15.1。兼容 0.14.2 的目标基于 bundled 官方参考，未在 0.14.2 二进制上编译，不应写成已验证。正文、标题、分节和歌词使用 LXGW Bright（Regular / Medium）；等宽字体使用 JetBrains Mono（中文回退到 LXGW Bright）；数学使用 Euler Math。运行 `python3 scripts/download_fonts.py` 下载并验证字体，来源、版本、SHA-256 与 OFL 许可证保存在各字体目录。字体来源为 [LXGW Bright 作者仓库](https://github.com/lxgw/LxgwBright)、[JetBrains Mono 官方仓库](https://github.com/JetBrains/JetBrainsMono)及 [CTAN Euler Math](https://www.ctan.org/pkg/euler-math)。构建脚本自动传入 `--font-path fonts`，无需安装到系统。
 
 ## 最小入口
 
@@ -114,6 +114,8 @@ python3 new_problem.py arena --title "另一道题" --directory arena-other
 文件约定还参考了 QOJ 的 [NOIP 2025 糖果店](https://qoj.ac/download.php?id=15457&type=statement)（candy.in/out）和 [联合省选 2026 找寻者](https://qoj.ac/download.php?id=17301&type=statement)（recollector.in/out）题面文字。
 
 ## 交付题面
+
+整卷的 `contest-document`、`contest-cover`、`contest-problem`、`contest-sample` 组件也集中在共用主题中。合并卷使用 25 mm 左右页边距、12 pt 正文、上下排列的带行号样例与连续页码，字体保持上述用户偏好；合并题解使用 11 pt 正文。目录与构建方式见 [组题与整卷交付](contest-packaging.md)。Markdown 题解经 Pandoc 转成原生 Typst 数学表达式，再由 Typst 编译。
 
 `python3 scripts/package_problem.py example` 在交付 ZIP 的 statement.typ 中内联共用主题和 limits.json 元信息，保留 down 文件读取（兼容旧题 samples）；工作目录中的原文件不变。全部下载样例随 ZIP 交付，可用 `--samples-only` 另打样例包。ZIP 不附带字体或根目录脚本。解包后安装相同字体，并在题目目录执行 `typst compile statement.typ statement.pdf`，或用 `--font-path` 指向字体目录。
 

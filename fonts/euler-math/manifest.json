@@ -1,0 +1,18 @@
+{
+  "upstream": "https://www.ctan.org/pkg/euler-math",
+  "version": "0.75 (2026-02-18)",
+  "files": [
+    {
+      "name": "Euler-Math.otf",
+      "url": "https://mirrors.mit.edu/CTAN/fonts/euler-math/Euler-Math.otf",
+      "sha256": "d6faf2b5f507aab84990b5fb144675a57dbd6b2b3c216947b99fb1dc9b140529",
+      "bytes": 438432
+    },
+    {
+      "name": "README.md",
+      "url": "https://mirrors.mit.edu/CTAN/fonts/euler-math/README.md",
+      "sha256": "51868a348b9dd84b9a6800387a183ee0cc407f3ae2a5935485dc5e5edf2fc143",
+      "bytes": 5211
+    }
+  ]
+}

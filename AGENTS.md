@@ -35,3 +35,5 @@
 - 不打包 BRIEF、STATUS、制作报告、私有评测工具、字体、共用脚本、项目文档或整个工作区。交付版 Typst 内联主题与元信息以消除根目录依赖，工作目录仍统一导入共用主题。
 - 交互题的公开接口、示例 grader 和编译说明可作为 `down/` 的样例配套文件，通过 `--participant-file` 显式打包；题面按组题后路径引用为 `[id]/[id].h`、`[id]/grader.cpp` 等。不得下发私有评测器或正式评测种子。
 - GitHub 的公开工具仓库只能提交通用工具、模板和约定，不得提交个人题目目录或已有私人 Git 历史。
+
+- 组题与整卷交付遵循 `docs/contest-packaging.md`，题序由用户指定，原题制作目录继续独立维护；字体统一使用 LXGW Bright、JetBrains Mono、Euler Math。

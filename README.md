@@ -6,13 +6,13 @@
 
 ## 快速开始
 
-需要 Python 3.9 或更新版本。编译题面还需要 Typst 与 Noto Sans Mono CJK SC 字体；算法程序所需的编译器按题目选择。
+需要 Python 3.9 或更新版本。编译题面还需要 Typst 及项目字体；算法程序所需的编译器按题目选择。
 
 ```sh
 git clone https://github.com/nuo0930/problem-maker.git
 cd problem-maker
 
-# 下载并校验共用主题使用的 LXGW Bright 字体
+# 下载并校验共用主题使用的三套字体
 python3 scripts/download_fonts.py
 
 # 创建题目目录，复制 BRIEF 模板
@@ -76,7 +76,7 @@ CNOI 除题意小样例外，还提供覆盖每档限制的下载样例，并尽
 
 每题维护 `statement.md`、`statement.typ` 和 `statement.pdf`。所有 Typst 题面导入根目录 [problem-theme.typ](problem-theme.typ)，统一控制字体、行距、标题、引用、样例框与页码。
 
-正文与标题采用 LXGW Bright，字体下载脚本固定上游提交并核验 SHA-256。字体按其 [OFL 许可证](fonts/lxgw-bright/OFL.txt)使用，来源与固定版本见 [SOURCE.md](fonts/lxgw-bright/SOURCE.md)。样例数据保留等宽字体。
+正文与标题采用 LXGW Bright，等宽文字采用 JetBrains Mono，数学采用 Euler Math；字体下载脚本固定上游提交并核验 SHA-256。字体按其 [OFL 许可证](fonts/lxgw-bright/OFL.txt)使用，来源与固定版本见 [SOURCE.md](fonts/lxgw-bright/SOURCE.md)。样例数据保留等宽字体。
 
 编写题目内容后，从项目根目录执行：
 
@@ -114,6 +114,17 @@ ZIP 只包含 `statement.md`、`statement.typ`、`statement.pdf`、题解、标�
 - `typst`：Typst 文档编写、模板修改和中文排版。
 
 skills 需要在所用 AI 环境中另行配置，本仓库不附带它们。缺少题解 skill 时，可以继续其他已授权工作，正式题解等待配置完成。创建目录和运行已有题面的编译脚本本身不依赖 AI。
+
+## 组成一套模拟赛
+
+完整流程见 [组题与整卷交付](docs/contest-packaging.md)。当前提供三题 CNOI-style 模拟赛构建器，需要 Pandoc、Typst 与项目字体：
+
+```bash
+python3 scripts/build_contest.py day1 example_a example_b example_c \
+  --title "省选模拟赛" --session "Day 1" --duration "5 小时"
+```
+
+题目按参数顺序排列。构建器复制题面、题解、标程、正式数据与样例，生成合并题面和题解；总 `down/` 仅保留选手需要的题面、样例与公开附件。构建记录保存在 `.build/manifest.json`。`--prepare-only` 跳过 PDF 编译，仍需 Pandoc 转换题解；`--pandoc` 和 `--compiler` 可指定程序路径。
 
 ## 目录
 

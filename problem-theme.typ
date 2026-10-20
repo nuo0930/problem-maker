@@ -41,7 +41,8 @@
   let output-name = if mode == "files" { id + ".out" } else if mode == "interface" { "通信接口" } else { "标准输出" }
 
   set document(title: title)
-  set text(font: ("LXGW Bright", "New Computer Modern"), size: 10.5pt, lang: lang, region: if lang == "zh" { "cn" } else { "us" })
+  set text(font: "LXGW Bright", size: 10.5pt, lang: lang, region: if lang == "zh" { "cn" } else { "us" })
+  show math.equation: set text(font: "Euler Math")
   set par(justify: true, leading: 1em, spacing: 0.8em,
     first-line-indent: if style == "CNOI-style" { (amount: 2em, all: true) } else { 0em })
   set page(paper: "a4", margin: (x: 19mm, top: 23mm, bottom: 20mm),
@@ -67,7 +68,7 @@
       #if style == "CNOI-style" { [【#it.body】] } else { it.body }
     ]
   ]
-  show raw: set text(font: "Noto Sans Mono CJK SC", size: 9pt)
+  show raw: set text(font: ("JetBrains Mono", "LXGW Bright"), size: 9pt)
   set table(stroke: 0.4pt + luma(150), inset: 6pt)
   show table.cell: set par(first-line-indent: 0pt)
 
@@ -83,8 +84,8 @@
     #set text(size: 9pt)
     #set par(first-line-indent: 0pt)
     #grid(columns: (auto, auto), column-gutter: 1.8em, row-gutter: 4pt,
-      [输入文件：], text(font: "Noto Sans Mono CJK SC", input-name),
-      [输出文件：], text(font: "Noto Sans Mono CJK SC", output-name),
+      [输入文件：], text(font: "JetBrains Mono", input-name),
+      [输出文件：], text(font: "JetBrains Mono", output-name),
       [时间限制：], if time-limit == none { [—] } else { [#time-limit 秒] },
       [空间限制：], if memory-limit == none { [—] } else { [#memory-limit MiB] },
     )
@@ -115,7 +116,7 @@
   #set par(first-line-indent: 0pt, justify: false, leading: 0.6em, spacing: 4pt)
   #text(font: "LXGW Bright", size: 9pt, weight: "medium", label)
   #v(4pt)
-  #text(font: "Noto Sans Mono CJK SC", size: 8.5pt, raw(data.trim(), block: true))
+  #text(font: ("JetBrains Mono", "LXGW Bright"), size: 8.5pt, raw(data.trim(), block: true))
 ]
 
 // 长十六进制行不能塞进半页宽；自动改为上下排列。
@@ -207,4 +208,115 @@
     table.header([*Subtask*], [*分值*], [*附加约束*]),
     ..rows.enumerate().map(((i, row)) => (str(i + 1), str(row.score), row.constraints)).flatten(),
   )
+}
+
+// 组题卷：参考联合省选 2026 Day1。单题默认样式保持独立。
+#let contest-document(title: "省选模拟赛", session: "Day 1", editorial: false, body) = {
+  set document(title: title + " " + session + (if editorial { " 题解" } else { "" }))
+  set text(font: "LXGW Bright",
+    size: if editorial { 11pt } else { 12pt }, lang: "zh", region: "cn")
+  show math.equation: set text(font: "Euler Math")
+  set par(justify: true, leading: 0.65em, spacing: if editorial { 0.85em } else { 0.55em },
+    first-line-indent: (amount: 2em, all: true))
+  set page(paper: "a4", margin: (x: 25mm, top: 25mm, bottom: 23mm),
+    header: none,
+    footer: [
+      #set text(size: 10pt)
+      #set par(first-line-indent: 0pt)
+      #align(center, context counter(page).display("第 1 页　共 1 页", both: true))
+    ],
+  )
+  set heading(numbering: none)
+  show heading: it => block(above: if editorial { 1.1em } else { 0.8em },
+    below: if editorial { 0.65em } else { 0.4em }, sticky: true)[
+    #set par(first-line-indent: 0pt)
+    #text(font: "LXGW Bright",
+      size: if it.level == 1 { 13pt } else { 12pt }, weight: "medium")[
+      #if editorial { it.body } else { [【#it.body】] }
+    ]
+  ]
+  show raw: set text(font: ("JetBrains Mono", "LXGW Bright"), size: 9pt)
+  show raw.where(block: true): it => block(width: 100%, inset: 8pt,
+    stroke: 0.5pt + luma(145), above: 5pt, below: 8pt)[
+    #set par(first-line-indent: 0pt, justify: false, leading: 0.45em)
+    #it
+  ]
+  set table(stroke: 0.45pt + luma(70), inset: (x: 5pt, y: if editorial { 6pt } else { 4pt }))
+  show table.cell: set par(first-line-indent: 0pt)
+  body
+}
+
+#let contest-cover(title: "省选模拟赛", session: "Day 1", duration: "5 小时", rows: ()) = {
+  set par(first-line-indent: 0pt)
+  v(10pt)
+  align(center)[
+    #text(font: "LXGW Bright", size: 24pt, weight: "medium", title)
+    #v(8pt)
+    #text(size: 18pt, session)
+    #v(10pt)
+    #text(size: 11pt)[考试时长：#duration　　总分：300 分]
+  ]
+  v(18pt)
+  text(size: 9.5pt)[
+    #table(columns: (1.25fr, 1fr, 1fr, 1fr), align: center,
+      ..rows.map(row => (row.label, ..row.values)).flatten(),
+    )
+  ]
+  v(12pt)
+  text(font: "LXGW Bright", size: 12pt, weight: "medium")[注意事项（请仔细阅读）]
+  v(7pt)
+  text(size: 10pt)[
+    #enum(spacing: 7pt,
+      [提交源文件按上表命名，使用 GNU C++17，编译选项为 #raw("-std=gnu++17 -O2")。],
+      [传统题从表中指定的文件读入并输出；交互题按各题公开接口与编译说明提交。],
+      [每题满分 100 分，具体评分规则以各题题面为准。],
+      [选手目录包含本试题 PDF，以及按题目标签分目录存放的样例与公开附件。样例不计入正式评分。],
+    )
+  ]
+}
+
+#let contest-problem(title: "", id: "", contest: "省选模拟赛", session: "Day 1", editorial: false, body) = {
+  set page(header: [
+    #set text(size: 10pt)
+    #set par(first-line-indent: 0pt)
+    #grid(columns: (1fr, auto), [#contest], [#session　#title（#id）#if editorial { [ 题解] }])
+    #v(3pt)
+    #line(length: 100%, stroke: 0.45pt + luma(95))
+  ])
+  block(above: 5pt, below: 16pt, sticky: true)[
+    #set par(first-line-indent: 0pt)
+    #align(center)[
+      #text(font: "LXGW Bright", size: 18pt, weight: "medium")[
+        #title（#id）#if editorial { [ 题解] }
+      ]
+    ]
+  ]
+  body
+  // 在局部页眉作用域内结束最后一页，避免末尾表格页丢失页眉。
+  pagebreak(weak: true)
+}
+
+// 整卷样例采用联合省选的输入、输出上下排列，并给数据行编号。
+#let contest-sample-box(data) = {
+  let lines = data.trim().split("\n")
+  block(width: 100%, breakable: false, inset: (x: 8pt, y: 7pt), stroke: 0.5pt + luma(145))[
+    #set par(first-line-indent: 0pt, justify: false, leading: 0.45em, spacing: 2pt)
+    #grid(columns: (auto, 1fr), column-gutter: 10pt, row-gutter: 3pt,
+      ..lines.enumerate().map(((i, line)) => (
+        text(font: "JetBrains Mono", size: 8.5pt, fill: luma(135), str(i + 1)),
+        text(font: ("JetBrains Mono", "LXGW Bright"), size: 9pt, raw(line)),
+      )).flatten(),
+    )
+  ]
+}
+
+#let contest-sample(input, output, number: 1, layout: "auto", explanation: none) = {
+  heading(level: 1)[样例 #number 输入]
+  contest-sample-box(input)
+  heading(level: 1)[样例 #number 输出]
+  contest-sample-box(output)
+  if explanation != none {
+    heading(level: 1)[样例 #number 解释]
+    explanation
+  }
 }
